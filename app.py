@@ -1,16 +1,33 @@
 import streamlit as st
-from pages import login, signup, chat
+from src.utils.styles import apply_dark_theme
+from src.utils.session import initialize_session_state
+from src.pages import login, signup, chat
 
-# Sidebar router
-PAGES = {
-    "Login": login.show,
-    "Sign Up": signup.show,
-    "Chat": chat.show,
-}
+# Page configuration
+st.set_page_config(
+    page_title="Dark Chat App",
+    page_icon="🌙",
+    layout="wide",
+    initial_sidebar_state="collapsed",
+)
 
-st.set_page_config(page_title="Beacon Chat — Streamlit", layout="wide")
+# Initialize session state
+initialize_session_state()
 
-st.sidebar.title("Beacon")
-page = st.sidebar.radio("Go to", list(PAGES.keys()))
+# Apply dark theme
+apply_dark_theme()
 
-PAGES[page]()
+
+# Navigation logic
+def main():
+    if not st.session_state.authenticated:
+        if st.session_state.page == "signup":
+            signup.render()
+        else:
+            login.render()
+    else:
+        chat.render()
+
+
+if __name__ == "__main__":
+    main()
